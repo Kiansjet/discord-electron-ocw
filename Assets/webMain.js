@@ -3,14 +3,22 @@
 
 const ipcRenderer = require('electron').ipcRenderer
 
-let webhookIdField = document.getElementById('webhookIdField')
-let webhookTokenField = document.getElementById('webhookTokenField')
-let messageField = document.getElementById('messageField')
-let sendButton = document.getElementById('sendButton')
-let outputBox = document.getElementById('outputBox')
+const webhookIdField = document.getElementById('webhookIdField')
+const webhookTokenField = document.getElementById('webhookTokenField')
+const webhookNameField = document.getElementById('webhookNameField')
+
+const webhookProfilePicField = document.getElementById('webhookProfilePicField')
+const tempWhyCantIUseThisButton = document.getElementById('tempWhyCantIUseThisButton')
+
+const messageField = document.getElementById('messageField')
+const sendButton = document.getElementById('sendButton')
+const outputBox = document.getElementById('outputBox')
+
 let sending = false
 
-ipcRenderer.on('sendingComplete',function(_,success,err) { // _ is a reference to the ipcRenderer afaik
+let tempWhyCantIUseThisDebounce = false
+
+function sendingComplete(_,success,err) { // _ is a reference to the ipcRenderer afaik
 	if (success) {
 		outputBox.placeholder = 'Message sent!'
 	} else {
@@ -19,7 +27,7 @@ ipcRenderer.on('sendingComplete',function(_,success,err) { // _ is a reference t
 	sendButton.disabled = false
 	sendButton.innerHTML = 'Send'
 	sending = false
-})
+}
 
 function send() {
 	if (!sending) {
@@ -27,13 +35,31 @@ function send() {
 		sendButton.disabled = true
 		sendButton.innerHTML = 'Sending...'
 		outputBox.placeholder = ''
+
 		ipcRenderer.send(
 			'sendButtonClicked',
 			webhookIdField.value,
 			webhookTokenField.value,
+			webhookNameField.value,
+			webhookProfilePicField.value,
 			messageField.value
 		)
 	}
+}
+
+// Handle the tempWhyCantIUseThisButton
+tempWhyCantIUseThisButton.addEventListener('click',function() {
+	if (!tempWhyCantIUseThisDebounce) {
+		tempWhyCantIUseThisDebounce = true
+		ipcRenderer.send('openTempWhyCantIUseThisButtonModal')
+	}
+})
+ipcRenderer.on('tempWhyCantIUseThisWindowClosed',function() {
+	tempWhyCantIUseThisDebounce = false
+})
+
+function fuckgoback() {
+	ipcRenderer.send('crashApp')
 }
 
 /*messageField.onkeypress = function(data) {
@@ -42,3 +68,6 @@ function send() {
 }*/ // I was gonna have a thing where u could press the enter key but nah
 
 sendButton.addEventListener('click',send)
+ipcRenderer.on('sendingComplete',sendingComplete)
+
+console.log('Yo! looks like you found the dev console, you sneaky bastard. I didn\'t really feel like putting an easter egg here sry. You can run fuckgoback() to crash the app though.')

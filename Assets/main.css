@@ -18,41 +18,65 @@
 	margin: none;
 }
 
-h1,h2 {
-	font-family: GoogleSans;
+form {
+	text-align: center;
+}
+
+h1,h2,h3,h4 {
+	font-family: GoogleSansBold;
 	text-align: center;
 	color: white;
 	user-select: none;
+	margin-top: 0;
+	margin-bottom: .3rem;
 }
 
-form {
-	text-align: center;
+h4 {
+	text-align: left;
+	margin-bottom: .2rem;
+	margin-top: 0;
+	padding: .5rem;
 }
 
 textarea {
 	font-family: GoogleSans;
 	color: white;
 	background-color: #484C52;
-	border: none;
+	border: .05rem solid #202225;
+	transition: border-color .2s;
 	border-radius: .5rem;
 	padding: .5rem;
-	text-align: center;
 	resize: none;
 	margin-top: .2rem;
+	margin-top: 0;
 	margin-bottom: .2rem;
 	outline: none;
 	width: 100%;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+textarea:focus {
+	border-color: #7289da;
+}
+
+textarea:disabled {
+	background-color: #202225;
 }
 
 #outputBox {
 	background-color: #202225;
+	border: none;
 	border-radius: 0;
 	height: 35%;
-	text-align: left;
+	white-space: normal;
+	overflow: auto;
 }
 
 #messageField {
-	resize: both;
+	resize: vertical;
+	white-space: normal;
+	overflow: auto;
 }
 
 br {
@@ -60,10 +84,41 @@ br {
 }
 
 button {
-	display: block;
 	font-family: GoogleSansBold;
-	margin: auto;
 	user-select: none;
-	margin-top: .2rem;
-	margin-bottom: .2rem;
+	margin-top: .5rem;
+	margin-bottom: .6rem;
+	background-color: #00000000;
+	transition: background-color .2s, border-color .2s;
+	color: white;
+	border: .1rem solid #43b581;
+	border-radius: .5rem;
+	padding: .5rem;
+}
+
+button:hover {
+	background-color: #43b581;
+}
+
+button:disabled {
+	background-color: #00000000;
+	border-color: #99aab5;
+}
+
+#sendButton {
+	width: 50%;
+}
+
+a {
+	display: block;
+	font-family: GoogleSans;
+	color: #7289da;
+	text-align: left;
+	padding: .5rem;
+	margin-top: -.4rem;
+	margin-bottom: .1rem;
+}
+
+a:hover {
+	color: #7289dac0
 }

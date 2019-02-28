@@ -1,0 +1,10 @@
+@font-face {
+	font-family: GoogleSans;
+	src: url(GoogleSans/Regular.ttf);
+}
+
+p {
+	font-family: GoogleSans;
+	color: white;
+	user-select: none;
+}
