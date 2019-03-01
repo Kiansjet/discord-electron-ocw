@@ -3,8 +3,11 @@
 
 const ipcRenderer = require('electron').ipcRenderer
 
+const webhookUrlField = document.getElementById('webhookUrlField')
+/*
 const webhookIdField = document.getElementById('webhookIdField')
 const webhookTokenField = document.getElementById('webhookTokenField')
+*/
 const webhookNameField = document.getElementById('webhookNameField')
 
 const webhookProfilePicField = document.getElementById('webhookProfilePicField')
@@ -38,8 +41,11 @@ function send() {
 
 		ipcRenderer.send(
 			'sendButtonClicked',
+			webhookUrlField.value,
+			/*
 			webhookIdField.value,
 			webhookTokenField.value,
+			*/
 			webhookNameField.value,
 			webhookProfilePicField.value,
 			messageField.value
@@ -58,6 +64,20 @@ ipcRenderer.on('tempWhyCantIUseThisWindowClosed',function() {
 	tempWhyCantIUseThisDebounce = false
 })
 
+// Other ipc stuff
+ipcRenderer.on('requestFormData',function() {
+	ipcRenderer.send('saveFormData',{
+		webhookUrl: webhookUrlField.value,
+		webhookName: webhookNameField.value,
+		webhookProfilePic: webhookProfilePicField.value
+	})
+})
+ipcRenderer.on('formDataLoaded',function(event,data) {
+	webhookUrlField.value = data.webhookUrl
+	webhookNameField.value = data.webhookName
+	webhookProfilePicField.value = data.webhookProfilePic
+})
+
 function fuckgoback() {
 	ipcRenderer.send('crashApp')
 }
@@ -69,5 +89,8 @@ function fuckgoback() {
 
 sendButton.addEventListener('click',send)
 ipcRenderer.on('sendingComplete',sendingComplete)
+
+// Request old form data
+ipcRenderer.send('loadFormData')
 
 console.log('Yo! looks like you found the dev console, you sneaky bastard. I didn\'t really feel like putting an easter egg here sry. You can run fuckgoback() to crash the app though.')
