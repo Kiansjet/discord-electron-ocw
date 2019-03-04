@@ -19,7 +19,8 @@ const outputBox = document.getElementById('outputBox')
 
 let sending = false
 
-let tempWhyCantIUseThisDebounce = false
+let auxWindowOpen = false
+
 
 function sendingComplete(_,success,err) { // _ is a reference to the ipcRenderer afaik
 	if (success) {
@@ -55,13 +56,13 @@ function send() {
 
 // Handle the tempWhyCantIUseThisButton
 tempWhyCantIUseThisButton.addEventListener('click',function() {
-	if (!tempWhyCantIUseThisDebounce) {
-		tempWhyCantIUseThisDebounce = true
+	if (!auxWindowOpen) {
+		auxWindowOpen = true
 		ipcRenderer.send('openTempWhyCantIUseThisButtonModal')
 	}
 })
 ipcRenderer.on('tempWhyCantIUseThisWindowClosed',function() {
-	tempWhyCantIUseThisDebounce = false
+	auxWindowOpen = false
 })
 
 // Other ipc stuff
