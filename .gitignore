@@ -1,0 +1,8 @@
+# GitIgnore is pretty much line-by-line exclusions from git
+
+# Exclude node_modules, theres a batch file to get them if someone clones it
+node_modules
+
+# Exclude cache folder, this just holds past form data to be loaded back into the app
+Cache
+
