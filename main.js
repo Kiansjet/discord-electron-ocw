@@ -1,11 +1,17 @@
 // Modules
 const {app,BrowserWindow,ipcMain} = require('electron')
-let discord = require('discord.js')
+const discord = require('discord.js')
 const url = require('url')
 const fileSystem = require('fs')
+const https = require('https')
+
+const useDiscordJs = false // make true to use discord.js module, otherwise standard http posts to discord api
+// WARNING that I never got the pfp changer to work with discord.js, which is why I switched to vanilla web calls.
+const baseDiscordApiUrl = 'http://discordapp.com/api/v6'
 
 let window
-let tempWhyCantIUseThisButtonModalWindow
+let cachedWebhookDisplayName
+
 app.on('ready',function() {
 	// Window Setup
 	window = new BrowserWindow({
@@ -39,7 +45,7 @@ app.on('ready',function() {
 	})
 
 	// Handle ipc calls
-	ipcMain.on('sendButtonClicked',function(event,/*webhookId,webhookToken,*/webhookUrl,webhookName,webhookProfilePic,message) {
+	ipcMain.on('sendButtonClicked',async function(event,/*webhookId,webhookToken,*/webhookUrl,webhookName,webhookProfilePic,message) {
 		let parsedUrl = url.parse(webhookUrl)
 		if (parsedUrl.hostname != 'discordapp.com') {
 			event.sender.send('sendingComplete',false,'Webhook url hostname is not discordapp.com')
@@ -50,50 +56,60 @@ app.on('ready',function() {
 			event.sender.send('sendingComplete',false,'Invalid webhook url pathname component')
 			return
 		}
+		if (message.replace(/\s/g,'') == '') {
+			event.sender.send('sendingComplete',false,'Empty message field')
+			return
+		}
 		const webhookId = parsedUrl[3]
 		const webhookToken = parsedUrl[4]
-		let webhook = new discord.WebhookClient(webhookId,webhookToken)
-		webhook.name = webhookName
-		webhook.avatar = webhookProfilePic
-		webhook.send(message).then(function() {
-			//ipcMain.send('sendingComplete',true) // doesnt work the same way in reverse, instead use the func below
-			event.sender.send('sendingComplete',true)
-		}).catch(function(err) {
-			//ipcMain.send('sendingComplete',false,err) // doesnt work the same way in reverse, instead use the func below
-			event.sender.send('sendingComplete',false,err)
-		})
-	})
-	ipcMain.on('openTempWhyCantIUseThisButtonModal',function(event) {
-		if (!tempWhyCantIUseThisButtonModalWindow) {
-			tempWhyCantIUseThisButtonModalWindow = new BrowserWindow({
-				parent: window,
-				modal: true,
-				title: 'Good Question',
-				icon: 'Assets/Icon.png',
-				width: 200,
-				height: 200,
-				backgroundColor: '#2c2f33',
-				center: true,
-				resizable: false,
-				minimizable: false,
-				maximizable: false,
-				skipTaskbar: true,
-				show: false,
-				webPreferences: {
-					//devTools: false,
-					nodeIntegration: false,
-					sandbox: true,
+		if (useDiscordJs) {
+			let webhook = new discord.WebhookClient(webhookId,webhookToken)
+			webhook.name = webhookName
+			webhook.avatar = webhookProfilePic
+			
+			if (cachedWebhookDisplayName != webhookName) {
+				await webhook.edit(webhookName,webhookProfilePic).then(function() {
+					cachedWebhookDisplayName = webhookName
+				}).catch(function(err) {
+					event.sender.send('logToConsole','Webhook edit failed. Error:')
+					event.sender.send('logToConsole',err)
+				})
+			}
+
+			webhook.send(message).then(function() {
+				//ipcMain.send('sendingComplete',true) // doesnt work the same way in reverse, instead use the func below
+				event.sender.send('sendingComplete',true)
+			}).catch(function(err) {
+				//ipcMain.send('sendingComplete',false,err) // doesnt work the same way in reverse, instead use the func below
+				event.sender.send('sendingComplete',false,err)
+			})
+		} else {
+			const requestBody = {
+				content: message,
+				username: webhookName,
+				avatar_url: webhookProfilePic
+			}
+			const request = https.request(`${baseDiscordApiUrl}/webhooks/${webhookId}/${webhookToken}`,{
+				method: 'POST',
+				protocol: 'https:',
+				headers: {
+					'Content-Type': 'application/json'
 				}
 			})
-			tempWhyCantIUseThisButtonModalWindow.on('close',function(event2) {
-				event2.preventDefault()
-				tempWhyCantIUseThisButtonModalWindow.hide()
-				event.sender.send('tempWhyCantIUseThisWindowClosed')
+
+			request.on('response',function(response) {
+				if (response.statusCode >= 200 && response.statusCode <= 299) {
+					event.sender.send('sendingComplete',true)
+				} else {
+					event.sender.send('sendingComplete',false,`${response.statusCode} ${response.statusMessage}`)
+				}
+				
 			})
-			tempWhyCantIUseThisButtonModalWindow.loadFile('Assets/tempWhyCantIUseThisPage.html')
-			tempWhyCantIUseThisButtonModalWindow.setMenu(null)
+
+			request.write(JSON.stringify(requestBody))
+			request.end()
 		}
-		tempWhyCantIUseThisButtonModalWindow.show()
+		
 	})
 	ipcMain.on('loadFormData',function(event) {
 		fileSystem.access('Cache/formData',fileSystem.constants.F_OK | fileSystem.constants.R_OK,function(err) {

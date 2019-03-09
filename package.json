@@ -9,7 +9,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "devtron": "^1.4.0",
     "electron": "^4.0.6"
   },
   "private": true,

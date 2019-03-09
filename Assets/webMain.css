@@ -20,6 +20,7 @@
 
 form {
 	text-align: center;
+	margin-bottom: 0;
 }
 
 h1,h2,h3,h4 {
@@ -113,10 +114,11 @@ a {
 	display: block;
 	font-family: GoogleSans;
 	color: #7289da;
-	text-align: left;
+	text-align: center;
 	padding: .5rem;
 	margin-top: -.4rem;
 	margin-bottom: .1rem;
+	cursor: pointer;
 }
 
 a:hover {

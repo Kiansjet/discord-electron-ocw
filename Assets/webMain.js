@@ -11,7 +11,6 @@ const webhookTokenField = document.getElementById('webhookTokenField')
 const webhookNameField = document.getElementById('webhookNameField')
 
 const webhookProfilePicField = document.getElementById('webhookProfilePicField')
-const tempWhyCantIUseThisButton = document.getElementById('tempWhyCantIUseThisButton')
 
 const messageField = document.getElementById('messageField')
 const sendButton = document.getElementById('sendButton')
@@ -21,17 +20,16 @@ let sending = false
 
 let auxWindowOpen = false
 
-
-function sendingComplete(_,success,err) { // _ is a reference to the ipcRenderer afaik
+ipcRenderer.on('sendingComplete',function(event,success,data) { // _ is a reference to the ipcRenderer afaik
 	if (success) {
 		outputBox.placeholder = 'Message sent!'
 	} else {
-		outputBox.placeholder = 'Sending failed: \n'+JSON.stringify(err)
+		outputBox.placeholder = 'Sending failed: \n'+JSON.stringify(data)
 	}
 	sendButton.disabled = false
 	sendButton.innerHTML = 'Send'
 	sending = false
-}
+})
 
 function send() {
 	if (!sending) {
@@ -43,27 +41,12 @@ function send() {
 		ipcRenderer.send(
 			'sendButtonClicked',
 			webhookUrlField.value,
-			/*
-			webhookIdField.value,
-			webhookTokenField.value,
-			*/
 			webhookNameField.value,
 			webhookProfilePicField.value,
 			messageField.value
 		)
 	}
 }
-
-// Handle the tempWhyCantIUseThisButton
-tempWhyCantIUseThisButton.addEventListener('click',function() {
-	if (!auxWindowOpen) {
-		auxWindowOpen = true
-		ipcRenderer.send('openTempWhyCantIUseThisButtonModal')
-	}
-})
-ipcRenderer.on('tempWhyCantIUseThisWindowClosed',function() {
-	auxWindowOpen = false
-})
 
 // Other ipc stuff
 ipcRenderer.on('requestFormData',function() {
@@ -78,6 +61,9 @@ ipcRenderer.on('formDataLoaded',function(event,data) {
 	webhookNameField.value = data.webhookName
 	webhookProfilePicField.value = data.webhookProfilePic
 })
+ipcRenderer.on('logToConsole',function(event,data) {
+	console.log(data)
+})
 
 function fuckgoback() {
 	ipcRenderer.send('crashApp')
@@ -89,7 +75,6 @@ function fuckgoback() {
 }*/ // I was gonna have a thing where u could press the enter key but nah
 
 sendButton.addEventListener('click',send)
-ipcRenderer.on('sendingComplete',sendingComplete)
 
 // Request old form data
 ipcRenderer.send('loadFormData')
