@@ -24,7 +24,7 @@ app.on('ready',function() {
 		title: 'Kian\'s One-click-webhook',
 		icon: 'Assets/Icon.png',
 		width: 450,
-		height: 520,
+		height: 610,
 		minWidth: 316,
 		minHeight: 300,
 		//resizable: false,

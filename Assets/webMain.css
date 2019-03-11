@@ -108,7 +108,7 @@ textarea:disabled {
 	background-color: #202225;
 	border: none;
 	border-radius: 0;
-	height: 35%;
+	height: 5rem;
 	white-space: normal;
 	overflow: auto;
 }
