@@ -4,7 +4,12 @@ const discord = require('discord.js')
 const url = require('url')
 const fileSystem = require('fs')
 const https = require('https')
-require('./Assets/testingActivation.js')
+
+try {
+	require('./Assets/testingActivation.js')
+} catch {
+	process.exit(5)
+}
 
 const useDiscordJs = false // true to use discord.js module, otherwise standard http posts to discord api
 // NOTE I never got the pfp changer to work with discord.js, which is why I switched to vanilla web calls.
