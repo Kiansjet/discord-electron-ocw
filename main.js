@@ -13,7 +13,7 @@ try {
 
 const useDiscordJs = false // true to use discord.js module, otherwise standard http posts to discord api
 // NOTE I never got the pfp changer to work with discord.js, which is why I switched to vanilla web calls.
-const baseDiscordApiUrl = 'http://discordapp.com/api/v6'
+const baseDiscordApiUrl = 'http://discordapp.com/api/v6' // gonna have to update this every now and then
 
 let window
 let cachedWebhookDisplayName
