@@ -1,13 +1,14 @@
 /* I'm also very bad at this lang */
 
+/* Core font was originally Google Sans but it wasn't open source at the time of writing */
 @font-face {
-	font-family: GoogleSans;
-	src: url(GoogleSans/Regular.ttf);
+	font-family: Lato;
+	src: url(Lato/Lato-Regular.ttf)
 }
 
 @font-face {
-	font-family: GoogleSansBold;
-	src: url(GoogleSans/Bold.ttf)
+	font-family: LatoBold;
+	src: url(Lato/Lato-Bold.ttf)
 }
 
 body {
@@ -27,7 +28,7 @@ form {
 }
 
 h1,h2,h3,h4 {
-	font-family: GoogleSansBold;
+	font-family: LatoBold;
 	text-align: center;
 	color: white;
 	user-select: none;
@@ -43,7 +44,7 @@ h4 {
 }
 
 textarea {
-	font-family: GoogleSans;
+	font-family: Lato;
 	color: white;
 	background-color: #484C52;
 	border: .05rem solid #202225;
@@ -75,7 +76,7 @@ br {
 }
 
 button {
-	font-family: GoogleSansBold;
+	font-family: LatoBold;
 	user-select: none;
 	margin-top: .5rem;
 	margin-bottom: .6rem;
@@ -115,7 +116,7 @@ textarea:disabled {
 
 a {
 	display: block;
-	font-family: GoogleSans;
+	font-family: Lato;
 	color: #7289da;
 	text-align: center;
 	padding: .5rem;
