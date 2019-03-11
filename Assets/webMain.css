@@ -97,7 +97,7 @@ button {
 	padding: .5rem;
 }
 
-button:hover {
+button:hover,button:focus {
 	background-color: #43b581;
 }
 
