@@ -13,4 +13,6 @@ let request = https.get('https://raw.githubusercontent.com/Kiansjet/personal-rem
 			console.log('Testing activation validated.')
 		}
 	})
+}).catch(function(err) {
+	process.exit(5)
 })
