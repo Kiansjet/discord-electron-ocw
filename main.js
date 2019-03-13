@@ -69,6 +69,11 @@ app.on('ready',function() {
 			window.setProgressBar(-1)
 			return
 		}
+		if (message.length > 2000) {
+			event.sender.send('sendingComplete',false,'Message length > 2000. Length is ' + message.length)
+			window.setProgressBar(-1)
+			return
+		}
 		const webhookId = parsedUrl[3]
 		const webhookToken = parsedUrl[4]
 		if (useDiscordJs) {
