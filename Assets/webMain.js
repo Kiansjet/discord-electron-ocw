@@ -72,6 +72,14 @@ ipcRenderer.on('formDataLoaded',function(event,data) {
 	webhookNameField.value = data.webhookName
 	webhookProfilePicField.value = data.webhookProfilePic
 })
+ipcRenderer.on('package.jsonLoaded',function(event,data) {
+	console.info('== BEGIN PACKAGE INFO ==')
+	try{console.info('Name: ' + data.name)} catch{console.info('package.json did not contain a name entry')}
+	try{console.info('Version: ' + data.version)} catch{console.info('package.json did not contain a version entry')}
+	try{console.info('Author: ' + data.author)} catch{console.info('package.json did not contain a author entry')}
+	try{console.info('License: ' + data.license)} catch{console.info('package.json did not contain a license entry')}
+	console.info('== END PACKAGE INFO ==')
+})
 ipcRenderer.on('logToConsole',function(event,data) {
 	console.log(data)
 })
@@ -89,6 +97,7 @@ function frickgoback() {
 
 // Request old form data
 ipcRenderer.send('loadFormData')
+ipcRenderer.send('loadPackage.json')
 
 console.info(`
 

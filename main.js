@@ -148,6 +148,26 @@ app.on('ready',function() {
 			}
 		})
 	})
+	ipcMain.on('loadPackage.json',function(event) {
+		fileSystem.access('package.json',fileSystem.constants.F_OK | fileSystem.constants.R_OK,function(err) {
+			if (err) {
+				event.sender.send('errorToConsole','Read access to package.json denied. File may not exist. Error:\n' + err)
+			} else {
+				fileSystem.readFile('package.json','utf8',function(err,data) {
+					if (err) {
+						event.sender.send('errorToConsole','Failed to read package.json. Error:\n' + err)
+					} else {
+						try {
+							data = JSON.parse(data)
+							event.sender.send('package.jsonLoaded',data)
+						} catch(err) {
+							event.sender.send('errorToConsole','Failed to parse package.json for repository.url. File may have been modified. Error:\n' + err)
+						}
+					}
+				})
+			}
+		})
+	})
 	ipcMain.on('loadFormData',function(event) {
 		fileSystem.access('Cache/formData',fileSystem.constants.F_OK | fileSystem.constants.R_OK,function(err) {
 			if (!err) {

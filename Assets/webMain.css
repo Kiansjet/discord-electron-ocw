@@ -145,7 +145,8 @@ a {
 }
 
 a:hover {
-	color: #7289dac0
+	color: #7289dac0;
+	text-decoration: underline;
 }
 
 .invisible {

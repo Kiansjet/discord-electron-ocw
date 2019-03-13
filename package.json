@@ -6,8 +6,8 @@
   "scripts": {
     "start": "electron ."
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Kian Mahmoudi",
+  "license": "Apache 2.0",
   "devDependencies": {
     "electron": "^4.0.6"
   },
