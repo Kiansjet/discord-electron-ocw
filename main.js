@@ -1,5 +1,5 @@
 // Modules
-const {app,BrowserWindow,ipcMain} = require('electron')
+const {app,BrowserWindow,ipcMain,shell} = require('electron')
 const discord = require('discord.js')
 const url = require('url')
 const fileSystem = require('fs')
@@ -24,14 +24,14 @@ app.on('ready',function() {
 		title: 'Kian\'s One-click-webhook',
 		icon: 'Assets/Icon.png',
 		width: 450,
-		height: 610,
+		height: 620,
 		minWidth: 316,
 		minHeight: 300,
 		//resizable: false,
 		backgroundColor: '#2c2f33',
 		show: false,
 		webPreferences: {
-			//devTools: false,
+			devTools: true,
 			nodeIntegration: true, // default val is changing so I cemented it
 		},
 	})
@@ -39,7 +39,6 @@ app.on('ready',function() {
 		window.show()
 	})
 	window.loadFile('Assets/webMain.html')
-	window.webContents.openDevTools()
 	window.setMenu(null)
 	window.on('close',function(event) {
 		event.preventDefault()
@@ -52,18 +51,22 @@ app.on('ready',function() {
 
 	// Handle ipc calls
 	ipcMain.on('sendButtonClicked',async function(event,/*webhookId,webhookToken,*/webhookUrl,webhookName,webhookProfilePic,message) {
+		window.setProgressBar(2) // any val outside of 0-1 iis intermediate mode
 		let parsedUrl = url.parse(webhookUrl)
 		if (parsedUrl.hostname != 'discordapp.com') {
 			event.sender.send('sendingComplete',false,'Webhook url hostname is not discordapp.com')
+			window.setProgressBar(-1)
 			return
 		}
 		parsedUrl = parsedUrl.pathname.split('/')
 		if (parsedUrl[1] != 'api' || parsedUrl[2] != 'webhooks') {
 			event.sender.send('sendingComplete',false,'Invalid webhook url pathname component')
+			window.setProgressBar(-1)
 			return
 		}
 		if (message.replace(/\s/g,'') == '') {
 			event.sender.send('sendingComplete',false,'Empty message field')
+			window.setProgressBar(-1)
 			return
 		}
 		const webhookId = parsedUrl[3]
@@ -77,8 +80,8 @@ app.on('ready',function() {
 				await webhook.edit(webhookName,webhookProfilePic).then(function() {
 					cachedWebhookDisplayName = webhookName
 				}).catch(function(err) {
-					event.sender.send('logToConsole','Webhook edit failed. Error:')
-					event.sender.send('logToConsole',err)
+					event.sender.send('errorToConsole','Webhook edit failed. Error:')
+					event.sender.send('errorToConsole',err)
 				})
 			}
 
@@ -115,7 +118,30 @@ app.on('ready',function() {
 			request.write(JSON.stringify(requestBody))
 			request.end()
 		}
-		
+		window.setProgressBar(-1)
+	})
+	ipcMain.on('openDevTools',function() {
+		window.openDevTools()
+	})
+	ipcMain.on('openGitHubRepo',function(event) {
+		fileSystem.access('package.json',fileSystem.constants.F_OK | fileSystem.constants.R_OK,function(err) {
+			if (err) {
+				event.sender.send('errorToConsole','Read access to package.json denied. File may not exist. Error:\n' + err)
+			} else {
+				fileSystem.readFile('package.json','utf8',function(err,data) {
+					if (err) {
+						event.sender.send('errorToConsole','Failed to read package.json. Error:\n' + err)
+					} else {
+						try {
+							let gitRepo = JSON.parse(data).repository.url
+							shell.openExternal(gitRepo)
+						} catch(err) {
+							event.sender.send('errorToConsole','Failed to parse package.json for repository.url. File may have been modified. Error:\n' + err)
+						}
+					}
+				})
+			}
+		})
 	})
 	ipcMain.on('loadFormData',function(event) {
 		fileSystem.access('Cache/formData',fileSystem.constants.F_OK | fileSystem.constants.R_OK,function(err) {

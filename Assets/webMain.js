@@ -16,9 +16,11 @@ const messageField = document.getElementById('messageField')
 const sendButton = document.getElementById('sendButton')
 const outputBox = document.getElementById('outputBox')
 
-let sending = false
+const consoleErrorDiv = document.getElementById('consoleErrorDiv')
+const openDevToolsButton = document.getElementById('openDevToolsButton')
+const openGitHubRepoButton = document.getElementById('openGitHubRepoButton')
 
-let auxWindowOpen = false
+let sending = false
 
 ipcRenderer.on('sendingComplete',function(event,success,data) { // _ is a reference to the ipcRenderer afaik
 	if (success) {
@@ -48,6 +50,15 @@ function send() {
 	}
 }
 
+// General events
+sendButton.addEventListener('click',send)
+openGitHubRepoButton.addEventListener('click',function() {
+	ipcRenderer.send('openGitHubRepo')
+})
+openDevToolsButton.addEventListener('click',function() {
+	ipcRenderer.send('openDevTools')
+})
+
 // Other ipc stuff
 ipcRenderer.on('requestFormData',function() {
 	ipcRenderer.send('saveFormData',{
@@ -64,19 +75,31 @@ ipcRenderer.on('formDataLoaded',function(event,data) {
 ipcRenderer.on('logToConsole',function(event,data) {
 	console.log(data)
 })
+ipcRenderer.on('errorToConsole',function(event,data) {
+	console.error(data)
+	if (consoleErrorDiv.classList.contains('invisible')) {
+		consoleErrorDiv.classList.remove('invisible')
+	}
+})
 
-function fuckgoback() {
+// just a meme function users can call from the console
+function frickgoback() {
 	ipcRenderer.send('crashApp')
 }
-
-/*messageField.onkeypress = function(data) {
-	console.log(data)
-	if (data.key == 'Enter' && !data.shiftKey) {send()}
-}*/ // I was gonna have a thing where u could press the enter key but nah
-
-sendButton.addEventListener('click',send)
 
 // Request old form data
 ipcRenderer.send('loadFormData')
 
-console.log('Yo! looks like you found the dev console, you sneaky bastard. I didn\'t really feel like putting an easter egg here sry. You can run fuckgoback() to crash the app though.')
+console.info(`
+
+ /$$   /$$           /$$ /$$           /$$
+| $$  | $$          | $$| $$          | $$
+| $$  | $$  /$$$$$$ | $$| $$  /$$$$$$ | $$
+| $$$$$$$$ /$$__  $$| $$| $$ /$$__  $$| $$
+| $$__  $$| $$$$$$$$| $$| $$| $$  \\ $$|__/
+| $$  | $$| $$_____/| $$| $$| $$  | $$    
+| $$  | $$|  $$$$$$$| $$| $$|  $$$$$$/ /$$
+|__/  |__/ \\_______/|__/|__/ \\______/ |__/
+
+Looks like you found the dev console, you sneaky bastard. I didn\'t really feel like putting an easter egg here sry. You can call frickgoback() to crash the app though.
+`)

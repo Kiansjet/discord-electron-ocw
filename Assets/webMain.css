@@ -59,6 +59,7 @@ textarea {
 	width: 100%;
 	white-space: nowrap;
 	overflow: hidden;
+	user-select: none;
 }
 
 textarea:focus {
@@ -114,17 +115,39 @@ textarea:disabled {
 	overflow: auto;
 }
 
+#consoleErrorDiv {
+	user-select: none;
+	font-family: Lato;
+	color: #ffffff;
+	display: inline;
+}
+
+#openDevToolsButton {
+	display: inline;
+	color: #F04747;
+}
+
+#openDevToolsButton:hover {
+	color: #f04747c0;
+}
+
 a {
 	display: block;
 	font-family: Lato;
 	color: #7289da;
+	transition: color .2s;
 	text-align: center;
 	padding: .5rem;
 	margin-top: -.4rem;
 	margin-bottom: .1rem;
 	cursor: pointer;
+	user-select: none;
 }
 
 a:hover {
 	color: #7289dac0
+}
+
+.invisible {
+	display: none !important;
 }

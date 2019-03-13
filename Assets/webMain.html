@@ -10,22 +10,17 @@
         <h3>I put way too little effort in this</h3>
         <form>
             <h4>Webhook URL</h4>
-            <textarea id="webhookUrlField" rows=1></textarea>
-            <!--
-            <h4>Webhook ID</h3>
-            <textarea id="webhookIdField" rows=1></textarea>
-            <h4>Webhook Token</h3>
-            <textarea id="webhookTokenField" rows=1></textarea>
-            -->
+            <textarea id="webhookUrlField" placeholder="https://discordapp.com/api/.../webhooks/.../..." rows=1></textarea>
             <h4>Webhook Display Name</h3>
             <textarea id="webhookNameField" rows=1></textarea>
             <h4>Webhook Profile Picture URL</h4>
-            <textarea id="webhookProfilePicField" rows=1></textarea>
+            <textarea id="webhookProfilePicField" placeholder="Has to be a picture ONLINE" rows=1></textarea>
             <h4>Message</h3>
             <textarea id="messageField" rows=1></textarea>
             <button id="sendButton">Send</button>
             <textarea id="outputBox" placeholder="Output" readonly></textarea>
-            <a id="mainHelpButton">Pls help me no understand</a>
+            <div id="consoleErrorDiv" class="invisible">There are errors in the console.</div><a id="openDevToolsButton">Open Developer Tools.</a>
+            <a id="openGitHubRepoButton">Check out the source and README on GitHub</a>
         </form>
     </div>
 </body>
