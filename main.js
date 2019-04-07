@@ -51,7 +51,7 @@ app.on('ready',function() {
 
 	// Handle ipc calls
 	ipcMain.on('sendButtonClicked',async function(event,/*webhookId,webhookToken,*/webhookUrl,webhookName,webhookProfilePic,message) {
-		window.setProgressBar(2) // any val outside of 0-1 iis intermediate mode
+		window.setProgressBar(2) // any val outside of 0-1 is intermediate mode
 		let parsedUrl = url.parse(webhookUrl)
 		if (parsedUrl.hostname != 'discordapp.com') {
 			event.sender.send('sendingComplete',false,'Webhook url hostname is not discordapp.com')
